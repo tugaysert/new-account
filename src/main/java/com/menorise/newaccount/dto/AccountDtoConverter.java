@@ -23,6 +23,7 @@ public class AccountDtoConverter {
                 customerDtoConverter.convertToAccountCustomer(from.getCustomer()),
                 Objects.requireNonNull(from.getTransactions())
                         .stream()
+                        //map(t-> transactionDtoConverter.convert(t))
                         .map(transactionDtoConverter::convert)
                         .collect(Collectors.toSet()));
     }

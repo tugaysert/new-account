@@ -4,17 +4,34 @@ package com.menorise.newaccount.dto;
 import com.menorise.newaccount.model.Customer;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Component
 public class CustomerDtoConverter {
 
-    public AccountCustomerDto convertToAccountCustomer(Customer from) {
-        if(from==null) {
-            return new AccountCustomerDto("","","");
-        }
+    private final CustomerAccountDtoConverter customerAccountDtoConverter;
 
-        return new AccountCustomerDto(
+    public CustomerDtoConverter(CustomerAccountDtoConverter converter) {
+        this.customerAccountDtoConverter = converter;
+    }
+
+    public AccountCustomerDto convertToAccountCustomer(Optional<Customer> from) {
+        return from.map(f -> new AccountCustomerDto(f.getId(), f.getName(), f.getSurname())).orElse(null);
+    }
+
+    public CustomerDto convertToCustomerDto(Customer from) {
+        return new CustomerDto(
                 from.getId(),
                 from.getName(),
-                from.getSurname());
+                from.getSurname(),
+                from.getAccounts()
+                        .stream()
+                        .map(customerAccountDtoConverter::convert)
+                        .collect(Collectors.toSet()));
+
     }
+
+
+
 }
